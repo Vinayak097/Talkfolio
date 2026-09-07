@@ -12,10 +12,10 @@ const suggestions = [
 export default function Home() {
   const [started,setStarted] =useState(true)
   return (
-    <div className="">
+    <div className="h-screen">
       <Navbar></Navbar>
 
-      <div className={`h-120 bg-amber-100 flex ${started && "items-center"} justify-center`}>
+      <div className={`relative h-[calc(100vh-64px)] bg-amber-100 flex ${started && "items-center"} justify-center`}>
           {started &&(
             <div className="flex flex-col gap-2">
               <h2>Try asking quetsions</h2>
@@ -25,7 +25,7 @@ export default function Home() {
             </div>
           )}
       </div>
-      <div className="flex justify-center p-2">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex justify-center p-2">
         <Searchbar></Searchbar>
       </div>
     </div>

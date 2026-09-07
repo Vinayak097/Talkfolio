@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { FormEvent, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 
-const Searchbar = () => {
+const Searchbar = ({ onSubmit, disabled = false }: { onSubmit: (prompt: string) => void; disabled?: boolean }) => {
   const [prompt, setPrompt] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -20,9 +20,18 @@ const Searchbar = () => {
     // Grow with content, up to 160px
     textarea.style.height = `${Math.min(textarea.scrollHeight, 160)}px`;
   };
+    
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    const value = prompt.trim();
+    if (!value || disabled) return;
+    onSubmit(value);
+    setPrompt("");
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
+  };
 
   return (
-    <div className="w-full  max-w-2xl px-4">
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl px-4">
       <div className="flex w-lg bg-amber-200 items-end gap-2 rounded-3xl border border-gray-500 px-4 py-3">
         <textarea
           ref={textareaRef}
@@ -30,6 +39,7 @@ const Searchbar = () => {
           onChange={handleChange}
           rows={1}
           placeholder="Give me a prompt..."
+          disabled={disabled}
           className="
             w-full
             max-h-40
@@ -46,13 +56,15 @@ scrollbar-track-transparent
         />
 
         <button
-          type="button"
-          className="shrink-0 rounded-full p-2 hover:bg-gray-100"
+          type="submit"
+          disabled={disabled || !prompt.trim()}
+          aria-label="Send message"
+          className="shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <IoMdSend className="text-xl text-black" />
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 

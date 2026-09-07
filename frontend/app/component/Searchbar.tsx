@@ -30,6 +30,13 @@ const Searchbar = ({ onSubmit, disabled = false }: { onSubmit: (prompt: string) 
     if (textareaRef.current) textareaRef.current.style.height = "auto";
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      event.currentTarget.form?.requestSubmit();
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl px-4">
       <div className="flex w-lg bg-amber-200 items-end gap-2 rounded-3xl border border-gray-500 px-4 py-3">
@@ -37,6 +44,7 @@ const Searchbar = ({ onSubmit, disabled = false }: { onSubmit: (prompt: string) 
           ref={textareaRef}
           value={prompt}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           rows={1}
           placeholder="Give me a prompt..."
           disabled={disabled}

@@ -1,6 +1,7 @@
 import json
 import os
 from collections.abc import AsyncIterator
+from pathlib import Path
 
 import httpx
 from fastapi import FastAPI, HTTPException
@@ -26,7 +27,9 @@ app.add_middleware(
 )
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-DEFAULT_MODEL = "llama-3.1-8b-instant"
+DEFAULT_MODEL = "groq/compound"
+SYSTEM_PROMPT_PATH = Path(__file__).with_name("system_prompt.txt")
+SYSTEM_PROMPT = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8").strip()
 
 
 class ChatMessage(BaseModel):
@@ -48,11 +51,7 @@ async def groq_stream(request: ChatRequest, api_key: str) -> AsyncIterator[str]:
     messages = [
         {
             "role": "system",
-            "content": (
-                "You are Talkfolio, a helpful assistant representing Vinay's portfolio. "
-                "Answer clearly and conversationally. If the portfolio does not provide "
-                "an answer, say so instead of inventing details."
-            ),
+            "content": SYSTEM_PROMPT,
         },
         *[message.model_dump() for message in request.history[-20:]],
         {"role": "user", "content": request.message},
